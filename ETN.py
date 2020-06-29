@@ -2,6 +2,7 @@ from copy import deepcopy
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
+import itertools
 
 
 
@@ -37,22 +38,32 @@ def from_ETNS_to_ETN(s,k):
 
 
     return(ETN)
-def get_node_encoding(ids_no_ego,nodes_no_ego,lenght_ETNS):
 
-    node_encoding = dict()
-    for n in ids_no_ego:
-        enc = []
-        for k in range(lenght_ETNS):
-            if (str(n)+"_"+str(k) in nodes_no_ego):
-                enc.append(1)
+
+def get_node_encoding_labeled(meta,node_encoding):
+    categories = np.sort(list(np.unique(list(meta.values())))+["0"])
+
+    meta_binary = list(itertools.product([0, 1], repeat=round(len(categories)**(1/2)+0.5)))
+    meta_dict = dict()
+    for i in range(len(categories)):    
+        meta_dict[categories[i]] = list(meta_binary[i])
+
+
+    new_node_encoding = dict()
+    for i in node_encoding:
+        tmp = []
+        for v in node_encoding[i]:
+            if(v==0):
+                tmp.extend(meta_dict["0"])
             else:
-                enc.append(0)
-        node_encoding[n]=enc
+                tmp.extend(meta_dict[meta[int(i)]])
+
+        new_node_encoding[i]=tmp
+
+    return(new_node_encoding)
         
-    return(node_encoding)
-
-
-def get_ETNS(ETN):
+    
+def get_ETNS(ETN,meta=None):
     nodes = list(ETN.nodes())
 
     # get_nodes without ego
@@ -69,16 +80,36 @@ def get_ETNS(ETN):
             lenght_ETNS = lenght_ETNS + 1
 
     node_encoding = get_node_encoding(ids_no_ego,nodes_no_ego,lenght_ETNS)
-
+    if not(meta == None):
+        node_encoding = get_node_encoding_labeled(meta,node_encoding)
+        
     for k in node_encoding.keys():
         node_encoding[k] = '0b'+''.join(str(e) for e in node_encoding[k])
 
     binary_node_encodings = list(node_encoding.values())
     binary_node_encodings.sort()
 
+    
     ETNS = '0b'+''.join(e[2:] for e in binary_node_encodings)
     
     return(ETNS)
+
+
+def get_node_encoding(ids_no_ego,nodes_no_ego,lenght_ETNS):
+
+    node_encoding = dict()
+    for n in ids_no_ego:
+        enc = []
+        for k in range(lenght_ETNS):
+            if (str(n)+"_"+str(k) in nodes_no_ego):
+                enc.append(1)
+            else:
+                enc.append(0)
+        node_encoding[n]=enc
+        
+    return(node_encoding)
+
+
 
 
 def get_egocentric_neighborhood(g,v):
