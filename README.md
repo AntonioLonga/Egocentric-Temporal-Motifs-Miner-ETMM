@@ -1,6 +1,6 @@
 # Egocentric Temporal Motifs Miner (ETMM)
 Here you can find the code associated with the paper "An Efficient Procedure for Mining Egocentric
-Temporal Motifs".  
+Temporal Motifs". [paper](https://arxiv.org/pdf/2110.01391.pdf)
 
 You can find a tutorial [here](https://antoniolonga.github.io/posts/ETMM.html)
 
