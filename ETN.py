@@ -283,7 +283,7 @@ def draw_ETN(ETN,multiple=False):
             
             
     if (node_label == {}):
-        nx.draw(ETN,pos=pos,node_size=100,alpha=0.9,with_labels=True)
+        nx.draw(ETN,pos=pos,node_size=100,alpha=0.9,with_labels=False)
         nx.draw_networkx_nodes(ETN, pos, nodelist=id_ego, node_size=300, node_color='red',alpha=0.5)
     else:
         nx.draw(ETN,pos=pos,node_size=100,alpha=0.5)
